@@ -219,7 +219,7 @@ Encourage responses and discussion
             }
             
             response = self.ai_coach.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=600,
                 messages=[{"role": "user", "content": prompt}],
                 system=f"""You are creating LinkedIn content for Rob, a Detective Sergeant transitioning to AI Engineer. 

@@ -78,7 +78,7 @@ Recent wins: {recent_wins}
             
             # Make API call
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=800,
                 messages=[
                     {"role": "user", "content": f"{user_message}"}
@@ -115,7 +115,7 @@ Keep it:
         try:
             system_prompt = self._build_system_prompt(context)
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=200,
                 messages=[{"role": "user", "content": motivation_prompt}],
                 system=system_prompt
@@ -150,7 +150,7 @@ Keep practical and specific."""
         try:
             system_prompt = self._build_system_prompt(context)
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=300,
                 messages=[{"role": "user", "content": focus_prompt}],
                 system=system_prompt
@@ -176,7 +176,7 @@ Give just the next task name (concise, actionable)."""
         try:
             system_prompt = self._build_system_prompt(context)
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=100,
                 messages=[{"role": "user", "content": next_task_prompt}],
                 system=system_prompt
@@ -209,7 +209,7 @@ Be honest but encouraging."""
         try:
             system_prompt = self._build_system_prompt(context)
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=400,
                 messages=[{"role": "user", "content": progress_prompt}],
                 system=system_prompt
@@ -233,7 +233,7 @@ Suggest specific activity that fits the time available."""
         try:
             system_prompt = self._build_system_prompt(context)
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=200,
                 messages=[{"role": "user", "content": time_prompt}],
                 system=system_prompt
