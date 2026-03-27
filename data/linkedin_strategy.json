@@ -1,0 +1,58 @@
+{
+  "posting_strategy": {
+    "frequency": "daily",
+    "best_posting_times": ["08:30", "12:00", "17:30"],
+    "content_rotation": [
+      "progress_update",
+      "learning_insight", 
+      "project_showcase",
+      "industry_reflection",
+      "tip_sharing",
+      "community_question"
+    ],
+    "current_rotation_index": 0
+  },
+  "brand_positioning": {
+    "unique_angle": "Detective Sergeant transitioning to AI Engineer",
+    "value_proposition": "Intersection of investigation skills and AI development",
+    "consistent_hashtags": ["#DetectiveToDeveloper", "#AIEngineering", "#LearningInPublic"],
+    "voice_and_tone": "Professional but authentic, investigative perspective"
+  },
+  "content_templates": {
+    "progress_update": {
+      "structure": ["Hook with streak/milestone", "Recent achievement details", "Learning insight", "Community question"],
+      "example_hooks": [
+        "Day {streak} of my AI learning journey! 🚀",
+        "Week {week} milestone achieved! ✅", 
+        "From zero to {achievement} in {timeframe}! 💪"
+      ]
+    },
+    "project_showcase": {
+      "structure": ["Problem statement", "Solution built", "Technologies used", "Key learnings", "Code/demo link"],
+      "detective_angle": "How investigation skills influenced the solution"
+    },
+    "learning_insight": {
+      "structure": ["Parallel discovered", "Detective context", "AI application", "Broader implications", "Community input request"],
+      "common_themes": ["Pattern recognition", "Evidence analysis", "Risk assessment", "Process improvement"]
+    }
+  },
+  "engagement_tracking": {
+    "post_performance": [],
+    "follower_growth": [],
+    "profile_views": [],
+    "connection_requests": []
+  },
+  "network_building": {
+    "target_connections": [
+      "AI engineers at target companies",
+      "Career transition success stories", 
+      "Police/security professionals in tech",
+      "AI learning content creators"
+    ],
+    "engagement_targets": [
+      "Comment thoughtfully on 5 posts daily",
+      "Share relevant content with detective perspective", 
+      "Connect with 3-5 new people weekly"
+    ]
+  }
+}

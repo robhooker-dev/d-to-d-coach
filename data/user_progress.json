@@ -1,0 +1,98 @@
+{
+  "user_info": {
+    "name": "Rob",
+    "role": "Detective Sergeant", 
+    "start_date": "2024-03-20",
+    "current_stage": "stage_2",
+    "days_since_start": 7
+  },
+  "streaks": {
+    "coding_streak": {
+      "current": 5,
+      "longest_ever": 5,
+      "last_activity_date": "2024-03-26"
+    },
+    "learning_streak": {
+      "current": 12,
+      "longest_ever": 12,
+      "last_activity_date": "2024-03-26"
+    },
+    "linkedin_streak": {
+      "current": 2,
+      "longest_ever": 2,
+      "last_post_date": "2024-03-25"
+    }
+  },
+  "current_focus": {
+    "primary_project": "AI Progress Coach",
+    "current_task": "Building complete data architecture",
+    "next_milestone": "Complete functional progress coach",
+    "estimated_completion": "2024-04-05",
+    "priority_skills": ["AI API integration", "Data architecture", "Full-stack development"]
+  },
+  "completed_activities": {
+    "2024-03-26": {
+      "coding_minutes": 90,
+      "learning_minutes": 45,
+      "activities": [
+        {
+          "type": "coding",
+          "description": "Built learning journey agent web interface",
+          "duration_minutes": 90,
+          "difficulty": "medium",
+          "notes": "Successfully implemented Streamlit dashboard"
+        },
+        {
+          "type": "learning",
+          "description": "Researched data architecture patterns",
+          "duration_minutes": 45,
+          "difficulty": "easy",
+          "notes": "Planning comprehensive progress coach"
+        }
+      ],
+      "mood": "motivated",
+      "energy_level": "high",
+      "daily_reflection": "Great progress on the agent. Excited about building complete system."
+    }
+  },
+  "achievements": {
+    "coding_milestones": [
+      {
+        "date": "2024-03-22",
+        "achievement": "First Python script",
+        "description": "Created detective_ai.py"
+      },
+      {
+        "date": "2024-03-25", 
+        "achievement": "First web application",
+        "description": "Learning journey agent with Streamlit"
+      }
+    ],
+    "learning_milestones": [
+      {
+        "date": "2024-03-24",
+        "achievement": "Python fundamentals completed",
+        "description": "Finished Coursera Programming for Everybody"
+      }
+    ],
+    "career_milestones": [
+      {
+        "date": "2024-03-21",
+        "achievement": "LinkedIn AI journey started", 
+        "description": "First post about learning AI"
+      }
+    ]
+  },
+  "performance_analytics": {
+    "weekly_averages": {
+      "coding_minutes_per_day": 65,
+      "learning_minutes_per_day": 40,
+      "consistency_percentage": 85
+    },
+    "progress_velocity": {
+      "tasks_completed_per_week": 8,
+      "projects_completed_per_month": 1.5,
+      "on_track_percentage": 110
+    }
+  }
+}

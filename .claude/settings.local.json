@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile /c/dev/detective-to-developer-coach/agents/progress_coach.py)",
+      "Bash(python -m py_compile /c/dev/detective-to-developer-coach/agents/ai_coach.py)",
+      "Bash(python -m py_compile /c/dev/detective-to-developer-coach/agents/linkedin_generator.py)",
+      "Bash(python -m py_compile /c/dev/detective-to-developer-coach/utils/analytics.py)",
+      "Bash(python3 -c \"from datetime import date; d = date.today\\(\\); print\\(d.replace\\(day=d.day-1\\)\\)\")"
+    ]
+  }
+}

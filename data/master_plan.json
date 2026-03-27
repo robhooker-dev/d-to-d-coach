@@ -1,0 +1,130 @@
+{
+  "program_info": {
+    "name": "Detective to Developer",
+    "start_date": "2024-03-20",
+    "target_completion": "2024-09-20",
+    "goal": "AI Engineer role at £100k+ (Palantir, Quantexa, BAE Systems, NCA)"
+  },
+  "stages": {
+    "stage_1": {
+      "name": "Foundation Building",
+      "duration_weeks": 4,
+      "status": "completed",
+      "completion_percentage": 100,
+      "skills": ["Python fundamentals", "Git/GitHub", "Basic AI concepts", "Web development basics"],
+      "projects": [
+        {
+          "name": "Detective AI Script",
+          "status": "completed",
+          "completion_date": "2024-03-22"
+        },
+        {
+          "name": "Learning Journey Agent",
+          "status": "completed", 
+          "completion_date": "2024-03-25"
+        }
+      ],
+      "milestones": [
+        "Python course completed",
+        "GitHub profile established",
+        "First AI application built",
+        "LinkedIn presence started"
+      ]
+    },
+    "stage_2": {
+      "name": "Real AI Integration",
+      "duration_weeks": 6,
+      "status": "in_progress",
+      "completion_percentage": 25,
+      "skills": ["AI API integration", "LangChain framework", "Vector databases", "RAG systems"],
+      "projects": [
+        {
+          "name": "AI Progress Coach (this project)",
+          "status": "in_progress",
+          "estimated_completion": "2024-04-05"
+        },
+        {
+          "name": "Document Analysis Tool",
+          "status": "planned",
+          "estimated_start": "2024-04-06"
+        },
+        {
+          "name": "Investigation Knowledge Base",
+          "status": "planned",
+          "estimated_start": "2024-04-20"
+        }
+      ],
+      "milestones": [
+        "API integration mastery",
+        "LangChain proficiency",
+        "RAG system built",
+        "Advanced portfolio projects"
+      ]
+    },
+    "stage_3": {
+      "name": "Specialization & Certification", 
+      "duration_weeks": 8,
+      "status": "planned",
+      "completion_percentage": 0,
+      "skills": ["Azure AI services", "AI security", "MLOps", "Enterprise deployment"],
+      "projects": [
+        {
+          "name": "AI Security Assessment Tool",
+          "status": "planned",
+          "estimated_start": "2024-05-01"
+        },
+        {
+          "name": "Counter-Corruption Intelligence Platform",
+          "status": "planned", 
+          "estimated_start": "2024-05-15"
+        }
+      ],
+      "milestones": [
+        "Azure AI-102 certification",
+        "Enterprise-grade applications",
+        "Industry speaking/writing",
+        "Technical interview readiness"
+      ]
+    },
+    "stage_4": {
+      "name": "Job Market Entry",
+      "duration_weeks": 8,
+      "status": "planned", 
+      "completion_percentage": 0,
+      "skills": ["Interview skills", "System design", "Technical communication", "Salary negotiation"],
+      "activities": [
+        "5-10 applications per week",
+        "Technical interview practice", 
+        "Networking events",
+        "Portfolio presentation refinement"
+      ],
+      "milestones": [
+        "10+ technical interviews",
+        "3+ final rounds",
+        "Job offer received",
+        "Successful transition"
+      ]
+    }
+  },
+  "daily_structure": {
+    "evening_coding": {
+      "target_duration_minutes": 60,
+      "typical_activities": ["Project development", "Tutorial completion", "Problem solving"],
+      "optimal_time": "19:00-20:00"
+    },
+    "commute_learning": {
+      "target_duration_minutes": 30,
+      "activities": ["Podcast listening", "Audio courses", "Industry news"],
+      "recommended_podcasts": [
+        "The AI Daily Brief",
+        "How I AI", 
+        "LangChain podcast",
+        "AI Engineering podcast"
+      ]
+    },
+    "weekend_deep_work": {
+      "target_duration_hours": 3,
+      "activities": ["Major project work", "Learning new frameworks", "Portfolio development"]
+    }
+  }
+}

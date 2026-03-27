@@ -1,0 +1,54 @@
+{
+  "personality_profile": {
+    "background": "Detective Sergeant with 15+ years experience in counter-corruption",
+    "learning_style": "Systematic, evidence-based, prefers practical applications",
+    "motivation_triggers": ["Progress tracking", "Clear next steps", "Real-world applications"],
+    "communication_preferences": "Direct, no-nonsense, detective humor appreciated",
+    "strengths": ["Pattern recognition", "Analytical thinking", "Process improvement", "Security mindset"],
+    "goals": {
+      "primary": "AI Engineer role at £100k+ within 18 months",
+      "target_companies": ["Palantir", "Quantexa", "BAE Systems", "NCA"],
+      "specialization": "AI Security and Investigation applications"
+    }
+  },
+  "conversation_context": {
+    "last_conversation_date": "2024-03-26",
+    "current_challenges": [
+      "Building comprehensive progress tracking system",
+      "Learning to integrate AI APIs effectively",
+      "Maintaining consistent LinkedIn presence"
+    ],
+    "recent_wins": [
+      "Completed first AI agent with web interface",
+      "Finished Python fundamentals course ahead of schedule",
+      "Started building professional GitHub portfolio"
+    ],
+    "recurring_questions": [
+      "What should I focus on next?",
+      "Am I on track with my timeline?",
+      "How can I leverage my detective background?"
+    ]
+  },
+  "interaction_history": {
+    "total_conversations": 15,
+    "topics_discussed": [
+      "Career transition planning",
+      "Technical learning roadmap", 
+      "LinkedIn strategy",
+      "Project development",
+      "AI applications in law enforcement"
+    ],
+    "successful_advice_given": [
+      "Stage-based learning approach",
+      "Building public portfolio",
+      "Leveraging investigation skills",
+      "Practical project selection"
+    ]
+  },
+  "adaptive_coaching": {
+    "preferred_response_length": "medium",
+    "motivation_style": "achievement-focused with clear metrics",
+    "feedback_style": "constructive with specific next steps",
+    "learning_pace": "accelerated but thorough"
+  }
+}
