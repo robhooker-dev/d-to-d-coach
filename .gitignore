@@ -1,6 +1,24 @@
+# Environment variables (protect API keys)
 .env
-.env.*
+
+# Virtual environment
+detective-ai-env/
+venv/
+.venv/
+
+# Python cache files
 __pycache__/
 *.pyc
 *.pyo
+
+# Streamlit cache
+.streamlit/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+*.swp
+*.swo
