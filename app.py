@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 import sys
+import json
+import anthropic
 from datetime import datetime, date, timedelta
 import plotly.graph_objects as go
 import plotly.express as px
@@ -12,6 +14,125 @@ load_dotenv()
 
 # Add project root to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+class ConversationMemory:
+    """Handles persistent conversation memory for the AI coach"""
+
+    def __init__(self, memory_file="data/conversation_memory.json"):
+        self.memory_file = memory_file
+        self.ensure_data_directory()
+
+    def ensure_data_directory(self):
+        """Create data directory if it doesn't exist"""
+        os.makedirs("data", exist_ok=True)
+
+    def save_conversation(self, user_message: str, ai_response: str, context_tags: list = None):
+        """Save a conversation exchange to persistent storage"""
+
+        # Load existing memory
+        memory = self.load_memory()
+
+        # Create conversation record
+        conversation = {
+            "timestamp": datetime.now().isoformat(),
+            "user_message": user_message,
+            "ai_response": ai_response,
+            "context_tags": context_tags or [],
+            "session_date": datetime.now().strftime("%Y-%m-%d")
+        }
+
+        # Add to conversations
+        memory["conversations"].append(conversation)
+
+        # Keep only last 100 conversations to prevent bloat
+        memory["conversations"] = memory["conversations"][-100:]
+
+        # Update metadata
+        memory["last_updated"] = datetime.now().isoformat()
+        memory["total_conversations"] = len(memory["conversations"])
+
+        # Save to file
+        try:
+            with open(self.memory_file, 'w') as f:
+                json.dump(memory, f, indent=2)
+        except Exception as e:
+            print(f"Error saving memory: {e}")
+
+    def load_memory(self):
+        """Load conversation memory from file"""
+        try:
+            with open(self.memory_file, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            # Initialize new memory structure
+            return {
+                "conversations": [],
+                "created": datetime.now().isoformat(),
+                "last_updated": datetime.now().isoformat(),
+                "total_conversations": 0
+            }
+        except Exception as e:
+            print(f"Error loading memory: {e}")
+            return {"conversations": [], "last_updated": datetime.now().isoformat()}
+
+    def get_recent_conversations(self, limit: int = 10):
+        """Get recent conversations for AI context"""
+        memory = self.load_memory()
+        recent = memory["conversations"][-limit:] if memory["conversations"] else []
+        return recent
+
+    def get_conversation_summary(self):
+        """Get summary of conversation history"""
+        memory = self.load_memory()
+        total = len(memory["conversations"])
+
+        if total == 0:
+            return "No previous conversations"
+
+        recent = memory["conversations"][-5:]  # Last 5 for summary
+        topics = []
+
+        for conv in recent:
+            if "linkedin" in conv["user_message"].lower():
+                topics.append("LinkedIn strategy")
+            elif "progress" in conv["user_message"].lower():
+                topics.append("Progress tracking")
+            elif "focus" in conv["user_message"].lower():
+                topics.append("Daily focus")
+            elif "advice" in conv["user_message"].lower():
+                topics.append("Career advice")
+
+        return {
+            "total_conversations": total,
+            "recent_topics": list(set(topics)),
+            "last_conversation": memory["conversations"][-1]["timestamp"] if memory["conversations"] else None
+        }
+
+    def format_memory_for_ai(self, limit: int = 8):
+        """Format recent conversations for AI context"""
+        recent = self.get_recent_conversations(limit)
+
+        if not recent:
+            return "No previous conversation history."
+
+        formatted = "Recent conversation history:\n"
+        for conv in recent:
+            date = conv["timestamp"][:10]  # Just the date part
+            formatted += f"\n[{date}] User: {conv['user_message'][:100]}..."
+            formatted += f"\n[{date}] You: {conv['ai_response'][:150]}...\n"
+
+        return formatted
+
+    def clear_memory(self):
+        """Clear all conversation memory"""
+        try:
+            if os.path.exists(self.memory_file):
+                os.remove(self.memory_file)
+            return True
+        except Exception as e:
+            print(f"Error clearing memory: {e}")
+            return False
+
 
 # Import our custom classes
 from agents.progress_coach import DetectiveToDeveloperCoach
@@ -92,6 +213,9 @@ def init_session_state():
     if 'ai_coach' not in st.session_state:
         st.session_state.ai_coach = st.session_state.coach.ai_coach
 
+    if 'simple_coach' not in st.session_state:
+        st.session_state.simple_coach = SimpleCoach(api_key=os.getenv('ANTHROPIC_API_KEY'))
+
     if 'daily_checkin_done' not in st.session_state:
         st.session_state.daily_checkin_done = False
 
@@ -125,7 +249,7 @@ def main():
     if page == "🏠 Dashboard":
         show_dashboard(coach)
     elif page == "🤖 AI Coach":
-        show_ai_coach(coach)
+        show_ai_coach(st.session_state.simple_coach)
     elif page == "📱 LinkedIn Content":
         show_linkedin_content(coach)
     elif page == "📝 Log Activity":
@@ -396,152 +520,198 @@ def show_recent_activity(coach):
     else:
         st.info("No recent activities logged. Start by logging your first activity!")
 
+class SimpleCoach:
+    """Simple coach class with persistent memory"""
+
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.memory = ConversationMemory()  # Add memory system
+
+        if api_key:
+            try:
+                self.client = anthropic.Anthropic(api_key=api_key)
+                self.ai_enabled = True
+                print("✅ AI Coach: Connected to Claude API")
+            except Exception as e:
+                print(f"❌ AI setup failed: {e}")
+                self.ai_enabled = False
+        else:
+            self.ai_enabled = False
+            print("⚠️ AI Coach: No API key - running in offline mode")
+
+    def chat(self, user_message):
+        """Chat with the AI coach with memory"""
+        if not self.ai_enabled:
+            return "AI Coach is offline. Please add your API key to enable conversations."
+
+        try:
+            # Build context with conversation memory
+            memory_context = self.memory.format_memory_for_ai()
+            conversation_summary = self.memory.get_conversation_summary()
+
+            system_prompt = f"""You are Rob's AI career transition coach with full memory of your ongoing relationship.
+
+CONVERSATION HISTORY:
+{memory_context}
+
+CONVERSATION SUMMARY:
+- Total conversations: {conversation_summary.get('total_conversations', 0)}
+- Recent topics: {', '.join(conversation_summary.get('recent_topics', []))}
+
+CURRENT CONTEXT - Rob's Profile:
+- Detective Sergeant with 15+ years in counter-corruption
+- Started AI learning journey on March 20, 2024 (Week 1 complete)
+- Goal: AI Engineer role at £100k+ within 18 months
+- Target companies: Palantir, Quantexa, BAE Systems, NCA
+- Just built and deployed AI Progress Coach (working Streamlit app)
+- Active on LinkedIn with #DetectiveToDeveloper hashtag
+
+IMPORTANT:
+- Reference previous conversations naturally when relevant
+- Remember what you've discussed before
+- Build on previous advice and suggestions
+- Acknowledge his progress and journey continuity
+
+Your responses should be:
+- Encouraging but direct
+- Reference his detective background as an advantage
+- Practical and actionable for his current week of learning
+- Show awareness of your ongoing coaching relationship"""
+
+            response = self.client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=600,
+                messages=[{"role": "user", "content": user_message}],
+                system=system_prompt
+            )
+
+            ai_response = response.content[0].text
+
+            # Save this conversation to memory
+            context_tags = self._extract_context_tags(user_message)
+            self.memory.save_conversation(user_message, ai_response, context_tags)
+
+            return ai_response
+
+        except Exception as e:
+            return f"Sorry Rob, I'm having a temporary issue: {str(e)}. Please try again!"
+
+    def _extract_context_tags(self, user_message):
+        """Extract context tags from user message for better memory organization"""
+        message_lower = user_message.lower()
+        tags = []
+
+        if "linkedin" in message_lower:
+            tags.append("linkedin")
+        if "progress" in message_lower or "doing" in message_lower:
+            tags.append("progress_check")
+        if "focus" in message_lower or "should i" in message_lower:
+            tags.append("daily_focus")
+        if "advice" in message_lower or "recommend" in message_lower:
+            tags.append("advice")
+        if "project" in message_lower:
+            tags.append("projects")
+
+        return tags
+
+    def get_memory_stats(self):
+        """Get memory statistics for debugging"""
+        return self.memory.get_conversation_summary()
+
+    def clear_memory(self):
+        """Clear conversation memory"""
+        return self.memory.clear_memory()
+
+
 # ========== AI COACH PAGE ==========
 
 def show_ai_coach(coach):
-    """AI Coach page with real conversations"""
+    """AI Coach page with persistent memory"""
     st.markdown("# 🤖 AI Progress Coach")
-    
-    # Check AI connection
-    if st.session_state.ai_coach and st.session_state.ai_coach.ai_enabled:
+
+    # Show connection status
+    if coach.ai_enabled:
         st.success("✅ AI Coach: Connected to Claude API")
+
+        # Show memory statistics
+        memory_stats = coach.get_memory_stats()
+        st.sidebar.info(f"🧠 Memory: {memory_stats.get('total_conversations', 0)} conversations stored")
+
     else:
-        st.error("❌ AI Coach: Not connected. Check your API key.")
-        return
-    
-    # Display chat history
+        st.error("❌ AI Coach: Not connected. Check your API key in .env file.")
+
+    # Display recent chat history from session state (for immediate feedback)
     if st.session_state.chat_history:
-        st.markdown("### 💬 Recent Conversation")
-        
-        # Show last 5 exchanges
-        for i, (user_msg, ai_response) in enumerate(st.session_state.chat_history[-5:]):
+        st.markdown("### 💬 Current Session")
+
+        # Show conversation history
+        for user_msg, ai_response in st.session_state.chat_history[-3:]:  # Last 3 exchanges
             st.markdown(f"**You:** {user_msg}")
-            st.markdown(f"**🤖 AI Coach:** {ai_response}")
-            if i < len(st.session_state.chat_history[-5:]) - 1:
-                st.markdown("---")
-    
-    # Chat input section
+            st.markdown(f"**🤖 Coach:** {ai_response}")
+            st.markdown("---")
+
+    # Chat input
     st.markdown("### 💭 Ask Your Coach")
-    
-    # Create form for chat
+
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_area(
             "What would you like to discuss?",
-            placeholder="Examples:\n• How am I doing with my progress?\n• What should I focus on today?\n• I'm feeling stuck with Python, any advice?\n• How can I leverage my detective skills in AI?",
-            height=100
+            placeholder="Examples:\n• How am I progressing with my transition?\n• What should I focus on today?\n• How can I leverage my detective skills?\n• Remember that LinkedIn post we discussed?",
+            height=120
         )
-        
-        col1, col2 = st.columns([1, 4])
-        with col1:
-            submit_button = st.form_submit_button("🚀 Send", type="primary")
-        
+
+        submit_button = st.form_submit_button("🚀 Send Message", type="primary")
+
         if submit_button and user_input.strip():
-            # Show thinking indicator
             with st.spinner("🤖 AI Coach is thinking..."):
-                try:
-                    # Create basic context for the AI
-                    context = {
-                        "user_profile": {
-                            "background": "Detective Sergeant transitioning to AI Engineer",
-                            "goal": "£100k+ AI Engineer role in 18 months",
-                            "target_companies": ["Palantir", "Quantexa", "BAE Systems", "NCA"]
-                        },
-                        "current_stage": {"name": "Stage 2: Real AI Integration"},
-                        "current_streaks": {
-                            "coding_streak": {"current": 5},
-                            "learning_streak": {"current": 12}
-                        },
-                        "current_focus": {
-                            "primary_project": "AI Progress Coach",
-                            "current_task": "Building conversational AI interface",
-                            "next_milestone": "Complete functional progress coach"
-                        },
-                        "days_since_start": 7,
-                        "recent_activity": {
-                            "most_recent_activities": [{
-                                "type": "coding",
-                                "description": "Building Streamlit AI coach interface",
-                                "duration_minutes": 90
-                            }]
-                        },
-                        "recent_challenges": ["Learning Streamlit", "API integration"],
-                        "recent_wins": ["Successfully connected Claude API", "Built working web interface"]
-                    }
-                    
-                    # Get AI response
-                    ai_response = st.session_state.ai_coach.chat(user_input, context)
-                    
-                    # Add to chat history
-                    st.session_state.chat_history.append((user_input, ai_response))
-                    
-                    # Rerun to show the new message
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"AI Error: {str(e)}")
-                    st.info("The AI coach had a temporary issue. Please try again.")
-    
-    # Quick question buttons
-    st.markdown("### ⚡ Quick Questions")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("📊 How am I progressing?", use_container_width=True):
-            quick_question = "How am I progressing overall with my Detective to AI Engineer transition? Give me an honest assessment."
-            st.session_state.pending_question = quick_question
-            st.rerun()
-    
-    with col2:
-        if st.button("🎯 What should I focus on?", use_container_width=True):
-            quick_question = "What should I focus on today for my learning? I have about 60 minutes for coding/learning tonight."
-            st.session_state.pending_question = quick_question
-            st.rerun()
-    
-    with col3:
-        if st.button("💡 Career advice?", use_container_width=True):
-            quick_question = "As a Detective transitioning to AI Engineer, what's my biggest advantage and how should I leverage it?"
-            st.session_state.pending_question = quick_question
-            st.rerun()
-    
-    # Handle pending questions from quick buttons
-    if hasattr(st.session_state, 'pending_question'):
-        question = st.session_state.pending_question
-        del st.session_state.pending_question
-        
-        with st.spinner("🤖 AI Coach is thinking..."):
-            try:
-                context = {
-                    "user_profile": {
-                        "background": "Detective Sergeant transitioning to AI Engineer",
-                        "goal": "£100k+ AI Engineer role in 18 months"
-                    },
-                    "current_stage": {"name": "Stage 2: Real AI Integration"},
-                    "current_streaks": {
-                        "coding_streak": {"current": 5},
-                        "learning_streak": {"current": 12}
-                    },
-                    "current_focus": {
-                        "primary_project": "AI Progress Coach",
-                        "current_task": "Building AI conversations"
-                    },
-                    "days_since_start": 7,
-                    "recent_activity": {"most_recent_activities": []},
-                    "recent_challenges": [],
-                    "recent_wins": []
-                }
-                
-                ai_response = st.session_state.ai_coach.chat(question, context)
-                st.session_state.chat_history.append((question, ai_response))
+                # Get AI response (now with memory!)
+                ai_response = coach.chat(user_input)
+
+                # Add to session chat history for immediate display
+                st.session_state.chat_history.append((user_input, ai_response))
+
+                # Refresh to show new message
                 st.rerun()
-                
-            except Exception as e:
-                st.error(f"AI Error: {str(e)}")
-    
-    # Clear chat history button
-    if st.session_state.chat_history:
-        if st.button("🗑️ Clear Chat History"):
-            st.session_state.chat_history = []
+
+    # Memory management section
+    with st.sidebar:
+        st.markdown("### 🧠 Memory Management")
+        memory_stats = coach.get_memory_stats()
+
+        if memory_stats != "No previous conversations":
+            st.write(f"**Total conversations:** {memory_stats.get('total_conversations', 0)}")
+
+            if memory_stats.get('recent_topics'):
+                st.write("**Recent topics:**")
+                for topic in memory_stats.get('recent_topics', []):
+                    st.write(f"• {topic}")
+
+            if st.button("🗑️ Clear All Memory"):
+                if coach.clear_memory():
+                    st.success("Memory cleared!")
+                    st.rerun()
+                else:
+                    st.error("Failed to clear memory")
+
+        # Quick question buttons
+        st.markdown("### ⚡ Quick Questions")
+
+        if st.button("📊 How am I doing?", use_container_width=True):
+            question = "How am I progressing overall with my Detective to AI Engineer transition? Give me an honest assessment based on our previous conversations."
+            ai_response = coach.chat(question)
+            st.session_state.chat_history.append((question, ai_response))
+            st.rerun()
+
+        if st.button("🎯 What's my focus?", use_container_width=True):
+            question = "Based on our previous discussions, what should I focus on today? I have about 60 minutes for coding/learning."
+            ai_response = coach.chat(question)
+            st.session_state.chat_history.append((question, ai_response))
+            st.rerun()
+
+        if st.button("💡 Career advice?", use_container_width=True):
+            question = "Considering everything we've discussed about my transition, what's my biggest advantage and how should I leverage it?"
+            ai_response = coach.chat(question)
+            st.session_state.chat_history.append((question, ai_response))
             st.rerun()
 
 # ========== LINKEDIN CONTENT PAGE ==========
