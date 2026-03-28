@@ -1,0 +1,14 @@
+{
+  "conversations": [
+    {
+      "timestamp": "2026-03-28T08:44:03.551363",
+      "user_message": "hi",
+      "ai_response": "Hey Rob! Good to have you here.\n\nSo this is actually our first conversation - no history to pull from yet, but I've got your profile loaded up and I know where you're at.\n\n**Quick snapshot of what I know:**\n- 15+ years counter-corruption detective work\n- Week 1 of your AI journey just wrapped up (started March 20, 2024)\n- You've already built and deployed a working Streamlit app - the AI Progress Coach\n- Targeting \u00a3100k+ AI Engineer roles within 18 months\n\nThat's a strong start honestly. Most people spend their first week reading articles. You shipped something.\n\n**So - what's on your mind today?**\n\nAre we talking about:\n- What to tackle next in your learning path?\n- Your LinkedIn strategy and the #DetectiveToDeveloper content?\n- How to position your detective background for target companies like Palantir or Quantexa?\n- Something else entirely?\n\nTell me where you want to focus and we'll get into it. \ud83c\udfaf",
+      "context_tags": [],
+      "session_date": "2026-03-28"
+    }
+  ],
+  "created": "2026-03-28T08:44:03.551340",
+  "last_updated": "2026-03-28T08:44:03.551406",
+  "total_conversations": 1
+}

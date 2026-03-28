@@ -548,6 +548,12 @@ class SimpleCoach:
             # Build context with conversation memory
             memory_context = self.memory.format_memory_for_ai()
             conversation_summary = self.memory.get_conversation_summary()
+            if isinstance(conversation_summary, dict):
+                total_convos = conversation_summary.get('total_conversations', 0)
+                recent_topics = ', '.join(conversation_summary.get('recent_topics', []))
+            else:
+                total_convos = 0
+                recent_topics = 'None yet'
 
             system_prompt = f"""You are Rob's AI career transition coach with full memory of your ongoing relationship.
 
@@ -555,12 +561,12 @@ CONVERSATION HISTORY:
 {memory_context}
 
 CONVERSATION SUMMARY:
-- Total conversations: {conversation_summary.get('total_conversations', 0)}
-- Recent topics: {', '.join(conversation_summary.get('recent_topics', []))}
+- Total conversations: {total_convos}
+- Recent topics: {recent_topics}
 
 CURRENT CONTEXT - Rob's Profile:
 - Detective Sergeant with 15+ years in counter-corruption
-- Started AI learning journey on March 20, 2024 (Week 1 complete)
+- Started AI learning journey on March 20, 2026 (Week 1 complete)
 - Goal: AI Engineer role at £100k+ within 18 months
 - Target companies: Palantir, Quantexa, BAE Systems, NCA
 - Just built and deployed AI Progress Coach (working Streamlit app)
