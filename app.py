@@ -635,7 +635,8 @@ def show_ai_coach(coach):
 
         # Show memory statistics
         memory_stats = coach.get_memory_stats()
-        st.sidebar.info(f"🧠 Memory: {memory_stats.get('total_conversations', 0)} conversations stored")
+        total = memory_stats.get('total_conversations', 0) if isinstance(memory_stats, dict) else 0
+        st.sidebar.info(f"🧠 Memory: {total} conversations stored")
 
     else:
         st.error("❌ AI Coach: Not connected. Check your API key in .env file.")
@@ -678,7 +679,7 @@ def show_ai_coach(coach):
         st.markdown("### 🧠 Memory Management")
         memory_stats = coach.get_memory_stats()
 
-        if memory_stats != "No previous conversations":
+        if isinstance(memory_stats, dict):
             st.write(f"**Total conversations:** {memory_stats.get('total_conversations', 0)}")
 
             if memory_stats.get('recent_topics'):
